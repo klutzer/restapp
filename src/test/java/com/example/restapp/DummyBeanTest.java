@@ -54,6 +54,26 @@ public class DummyBeanTest extends AbstractTest {
 				.get(new GenericType<List<DummyBean>>(){});
 		assertNotNull(response);
 		assertTrue(response.isEmpty());
+		
+		DummyBean d1 = new DummyBean();
+		d1.setName("John");
+		DummyBean d2 = new DummyBean();
+		d2.setName("Kate");
+		
+		session.insert(d1);
+		session.insert(d2);
+		
+		commit();
+		
+		response = target("dummy")
+				.request()
+				.get(new GenericType<List<DummyBean>>(){});
+		assertNotNull(response);
+		assertEquals(2, response.size());
+		assertEquals(new Long(1), response.get(0).getId());		
+		assertEquals("John", response.get(0).getName());		
+		assertEquals(new Long(2), response.get(1).getId());		
+		assertEquals("Kate", response.get(1).getName());
 	}
 	
 }

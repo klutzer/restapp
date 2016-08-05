@@ -25,12 +25,17 @@ import com.example.restapp.db.H2ConnectionManager;
 @ApplicationPath("/api/*")
 public class App extends ResourceConfig {
 
-	private static final Container container = new MentaContainer();
-	private BeanManager beanManager = new BeanManager();
+	private static Container container;
+	private final BeanManager beanManager;
 	
 	public App() {
+		
+		container = new MentaContainer();
+		beanManager = new BeanManager();
+		
 		//Mapping recursively by package name
 		packages(getClass().getPackage().getName());
+		
 		beans();
 		ioc();
 	}
@@ -41,9 +46,9 @@ public class App extends ResourceConfig {
 	
 	public static void releaseAndShutdown() {
 		ConnectionManager cm = container.get(ConnectionManager.class);
-		cm.shutdown();
 		container.clear(Scope.THREAD);
 		container.clear(Scope.SINGLETON);
+		cm.shutdown();
 	}
 	
 	private void ioc() {

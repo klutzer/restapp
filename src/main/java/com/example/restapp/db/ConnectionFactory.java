@@ -9,8 +9,6 @@ import com.example.restapp.App;
 
 public class ConnectionFactory implements Factory, Interceptor<Connection> {
 
-	private static final ConnectionManager manager = App.container().get(ConnectionManager.class);
-	
 	@Override
 	public void onCreated(Connection conn) {
 		//Nothing to do here
@@ -18,18 +16,22 @@ public class ConnectionFactory implements Factory, Interceptor<Connection> {
 
 	@Override
 	public void onCleared(Connection conn) {
-		manager.commit(conn);
+		getConnectionManager().commit(conn);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getInstance() {
-		return (T) manager.getConnection();
+		return (T) getConnectionManager().getConnection();
 	}
 
 	@Override
 	public Class<?> getType() {
 		return Connection.class;
+	}
+	
+	public ConnectionManager getConnectionManager() {
+		return App.container().get(ConnectionManager.class);
 	}
 
 }

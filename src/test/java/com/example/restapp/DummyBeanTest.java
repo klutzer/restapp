@@ -17,13 +17,7 @@ public class DummyBeanTest extends AbstractTest {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		session.createTable(DummyBean.class);
-	}
-	
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-		session.dropTable(DummyBean.class);
+		session().createTable(DummyBean.class);
 	}
 	
 	@Test
@@ -60,8 +54,8 @@ public class DummyBeanTest extends AbstractTest {
 		DummyBean d2 = new DummyBean();
 		d2.setName("Kate");
 		
-		session.insert(d1);
-		session.insert(d2);
+		session().insert(d1);
+		session().insert(d2);
 		
 		commit();
 		

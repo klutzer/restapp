@@ -13,7 +13,9 @@ import org.mentabean.util.SQLUtils;
 
 public class AbstractTest extends JerseyTest {
 
-	protected final BeanSession session = App.container().get(BeanSession.class);
+	protected final BeanSession session() {
+		return App.container().get(BeanSession.class);
+	}
 	
 	@Override
 	protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
@@ -28,11 +30,12 @@ public class AbstractTest extends JerseyTest {
 		
 		return ServletDeploymentContext
 				.forServlet(new ServletContainer(new App()))
+				.addListener(ContextListener.class)
 				.build();
 	}
 	
 	protected void commit() {
-		SQLUtils.commitTransaction(session.getConnection());
+		SQLUtils.commitTransaction(session().getConnection());
 	}
 	
 }

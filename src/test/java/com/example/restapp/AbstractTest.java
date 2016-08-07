@@ -1,5 +1,9 @@
 package com.example.restapp;
 
+import java.util.logging.Logger;
+
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -11,6 +15,7 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.mentabean.BeanSession;
 import org.mentabean.util.SQLUtils;
 
+@SuppressWarnings("deprecation")
 public class AbstractTest extends JerseyTest {
 
 	protected final BeanSession session() {
@@ -32,6 +37,14 @@ public class AbstractTest extends JerseyTest {
 				.forServlet(new ServletContainer(new App()))
 				.addListener(ContextListener.class)
 				.build();
+	}
+	
+	@Override
+	protected void configureClient(ClientConfig config) {
+		//Doesn't work :(
+		//config.register(LoggingFeature.class);
+		config.register(new LoggingFilter(Logger.getLogger(getClass().getSimpleName()), true));
+		config.register(JsonProvider.class);
 	}
 	
 	protected void commit() {

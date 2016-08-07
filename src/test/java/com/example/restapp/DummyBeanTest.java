@@ -8,6 +8,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
 import com.example.restapp.business.DummyBean;
@@ -33,7 +35,8 @@ public class DummyBeanTest extends AbstractTest {
 	
 	@Test
 	public void testPostAsJSON() throws Exception {
-		String json = "{\"name\": \"Érico KL\"}";
+		String json = "{\"name\": \"Érico KL\","
+				+ "\"date\": \"1\"}";
 		DummyBean response = target("dummy")
 				.request()
 				.post(Entity.entity(json, MediaType.APPLICATION_JSON), DummyBean.class);
@@ -68,6 +71,20 @@ public class DummyBeanTest extends AbstractTest {
 		assertEquals("John", response.get(0).getName());		
 		assertEquals(new Long(2), response.get(1).getId());		
 		assertEquals("Kate", response.get(1).getName());
+	}
+	
+	@Test
+	public void testSendingDateTimeType() throws Exception {
+		DummyBean d = new DummyBean();
+		d.setName("Érico");
+		DateTime time = new DateTime().withDate(1991, 01, 31);
+		d.setDate(time);
+		
+		d = target("dummy")
+				.request()
+				.post(Entity.json(d), DummyBean.class);
+		assertEquals(new Long(1), d.getId());
+		assertEquals(time.withZone(DateTimeZone.UTC), d.getDate().withZone(DateTimeZone.UTC));
 	}
 	
 }

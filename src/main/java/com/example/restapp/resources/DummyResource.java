@@ -20,14 +20,14 @@ public class DummyResource {
 	private DummyBeanDAO dummyDAO = App.container().get(DummyBeanDAO.class);
 	
 	@POST
-	@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public DummyBean add(DummyBean bean) {
 		return dummyDAO.add(bean);
 	}
 	
 	@GET
-	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@Produces(MediaType.APPLICATION_JSON)
 	public List<DummyBean> listAll() {
 		return dummyDAO.listByExample(new DummyBean());
 	}

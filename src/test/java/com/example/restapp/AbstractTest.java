@@ -15,6 +15,8 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.mentabean.BeanSession;
 import org.mentabean.util.SQLUtils;
 
+import com.example.restapp.db.H2ConnectionManager;
+
 @SuppressWarnings("deprecation")
 public class AbstractTest extends JerseyTest {
 
@@ -34,7 +36,7 @@ public class AbstractTest extends JerseyTest {
 		forceSet(TestProperties.CONTAINER_PORT, "0");
 		
 		return ServletDeploymentContext
-				.forServlet(new ServletContainer(new App()))
+				.forServlet(new ServletContainer(new App(new H2ConnectionManager())))
 				.addListener(ContextListener.class)
 				.build();
 	}

@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.util.Enumeration;
 
 import org.mentabean.BeanException;
+import org.mentabean.BeanSession;
 import org.mentabean.util.SQLUtils;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -24,6 +25,8 @@ public abstract class ConnectionManager {
 	 * Take a look at HikariCP (https://github.com/brettwooldridge/HikariCP)
 	 */
 	public abstract HikariDataSource createPool();
+	
+	public abstract Class<? extends BeanSession> getSessionClass();
 	
 	public void shutdown() {
 		pool.close();

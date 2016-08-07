@@ -8,8 +8,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.mentabean.BeanConfig;
 import org.mentabean.BeanManager;
 import org.mentabean.BeanSession;
-import org.mentabean.DBTypes;
-import org.mentabean.jdbc.H2BeanSession;
 import org.mentabean.util.PropertiesProxy;
 import org.mentacontainer.Container;
 import org.mentacontainer.Scope;
@@ -20,7 +18,8 @@ import com.example.restapp.business.DummyBean;
 import com.example.restapp.dao.DummyBeanDAO;
 import com.example.restapp.db.ConnectionFactory;
 import com.example.restapp.db.ConnectionManager;
-import com.example.restapp.db.H2ConnectionManager;
+import com.example.restapp.db.PostgreConnectionManager;
+import com.example.restapp.db.types.DBTypes;
 
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -31,7 +30,7 @@ public class App extends ResourceConfig {
 	private static Container container;
 	private final BeanManager beanManager;
 	
-	public App() {
+	public App(ConnectionManager cm) {
 		
 		container = new MentaContainer();
 		beanManager = new BeanManager();
@@ -41,10 +40,11 @@ public class App extends ResourceConfig {
 		
 		setUpSwagger();
 		beans();
-		ioc();
-		
-		BeanSession session = container.get(BeanSession.class);
-		session.createTables();
+		ioc(cm);
+	}
+	
+	public App() {
+		this(new PostgreConnectionManager());
 	}
 	
 	public static Container container() {
@@ -58,11 +58,11 @@ public class App extends ResourceConfig {
 		cm.shutdown();
 	}
 	
-	private void ioc() {
-		container.ioc(ConnectionManager.class, new SingletonFactory(new H2ConnectionManager()));
+	private void ioc(ConnectionManager cm) {
+		container.ioc(ConnectionManager.class, new SingletonFactory(cm));
 		container.ioc(BeanManager.class, new SingletonFactory(beanManager));
 		container.ioc(Connection.class, new ConnectionFactory(), Scope.THREAD);
-		container.ioc(BeanSession.class, H2BeanSession.class, Scope.THREAD)
+		container.ioc(BeanSession.class, cm.getSessionClass(), Scope.THREAD)
 			.addConstructorDependency(BeanManager.class)
 			.addConstructorDependency(Connection.class);
 		container.autowire(BeanSession.class);
@@ -79,7 +79,8 @@ public class App extends ResourceConfig {
 		DummyBean bean = PropertiesProxy.create(DummyBean.class);
 		BeanConfig config = new BeanConfig(DummyBean.class, "dummies")
 				.pk(bean.getId(), DBTypes.AUTOINCREMENT)
-				.field(bean.getName(), DBTypes.STRING);
+				.field(bean.getName(), DBTypes.STRING)
+				.field(bean.getDate(), DBTypes.JODA_DATETIME);
 		
 		beanManager.addBeanConfig(config);
 	}

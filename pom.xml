@@ -13,7 +13,7 @@
 	</properties>
 
 	<build>
-		<finalName>restapp</finalName>
+		<finalName>RestApp</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

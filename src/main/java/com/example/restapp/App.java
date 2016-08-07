@@ -22,6 +22,9 @@ import com.example.restapp.db.ConnectionFactory;
 import com.example.restapp.db.ConnectionManager;
 import com.example.restapp.db.H2ConnectionManager;
 
+import io.swagger.jaxrs.listing.ApiListingResource;
+import io.swagger.jaxrs.listing.SwaggerSerializers;
+
 @ApplicationPath("/api/*")
 public class App extends ResourceConfig {
 
@@ -36,8 +39,12 @@ public class App extends ResourceConfig {
 		//Mapping recursively by package name
 		packages(getClass().getPackage().getName());
 		
+		setUpSwagger();
 		beans();
 		ioc();
+		
+		BeanSession session = container.get(BeanSession.class);
+		session.createTables();
 	}
 	
 	public static Container container() {
@@ -75,6 +82,20 @@ public class App extends ResourceConfig {
 				.field(bean.getName(), DBTypes.STRING);
 		
 		beanManager.addBeanConfig(config);
+	}
+	
+	private void setUpSwagger() {
+		
+		registerClasses(SwaggerSerializers.class, ApiListingResource.class);
+		
+		io.swagger.jaxrs.config.BeanConfig conf = new io.swagger.jaxrs.config.BeanConfig();
+		conf.setTitle("RestApp API");
+		conf.setDescription("Live docs for RestApp API");
+        conf.setVersion("v1");
+        conf.setResourcePackage("com.example.restapp.resources");
+        conf.setPrettyPrint(true);
+        conf.setBasePath("/RestApp/api");
+        conf.setScan(true);
 	}
 	
 }

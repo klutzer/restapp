@@ -11,6 +11,12 @@ Enjoy it!
 - HikariCP (Connection Pool)
 - Jackson (JSON provider)
 - JodaTime (Date/Time)
-- Grizzly (Web Server)
+- Jetty/Grizzly (Web Servers)
 - H2 (JUnit tests)
 
+##Getting Started
+To run this RESTful web service you can just clone this repository and run
+```
+mvn jetty:run
+```
+Then, access your API docs in http://localhost:8080/RestApp/docs

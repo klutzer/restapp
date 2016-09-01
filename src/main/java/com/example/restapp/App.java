@@ -1,9 +1,11 @@
 package com.example.restapp;
 
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 import javax.ws.rs.ApplicationPath;
 
+import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.mentabean.BeanConfig;
 import org.mentabean.BeanManager;
@@ -18,12 +20,13 @@ import com.example.restapp.business.DummyBean;
 import com.example.restapp.dao.DummyBeanDAO;
 import com.example.restapp.db.ConnectionFactory;
 import com.example.restapp.db.ConnectionManager;
-import com.example.restapp.db.PostgreConnectionManager;
+import com.example.restapp.db.H2ConnectionManager;
 import com.example.restapp.db.types.DBTypes;
 
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 
+@SuppressWarnings("deprecation")
 @ApplicationPath("/api/*")
 public class App extends ResourceConfig {
 
@@ -41,10 +44,12 @@ public class App extends ResourceConfig {
 		setUpSwagger();
 		beans();
 		ioc(cm);
+		executePreRun(cm);
 	}
 	
 	public App() {
-		this(new PostgreConnectionManager());
+		this(new H2ConnectionManager());
+		register(new LoggingFilter(Logger.getLogger(getClass().getSimpleName()), true));
 	}
 	
 	public static Container container() {
@@ -70,6 +75,12 @@ public class App extends ResourceConfig {
 		//Here add your own IoC settings...
 		container.ioc(DummyBeanDAO.class, DummyBeanDAO.class);
 		//...
+	}
+	
+	private void executePreRun(ConnectionManager cm) {
+		BeanSession session = container.get(BeanSession.class);
+		cm.preRun(session);
+		container.clear(Scope.THREAD);
 	}
 	
 	private void beans() {

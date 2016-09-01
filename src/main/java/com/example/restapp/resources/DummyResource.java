@@ -3,9 +3,12 @@ package com.example.restapp.resources;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -37,6 +40,46 @@ public class DummyResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<DummyBean> listAll() {
 		return dummyDAO.listByExample(new DummyBean());
+	}
+	
+	@ApiOperation("Delete dummy bean by id")
+	@DELETE
+	@Path("{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public BeanResponse delete(@PathParam("id") Long id) {
+		return new BeanResponse().setMsg(
+				dummyDAO.delete(new DummyBean(id)) ? "Bean deleted" : "Nothing was deleted");
+	}
+	
+	@ApiOperation("Updates an existing dummy")
+	@PUT
+	@Path("{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public DummyBean add(@PathParam("id") Long id, @ApiParam("The dummy to update") DummyBean bean) {
+		bean.setId(id);
+		return dummyDAO.update(bean);
+	}
+	
+	public static class BeanResponse {
+		
+		private Boolean success;
+		private String msg;
+		
+		public Boolean isSuccess() {
+			return success;
+		}
+		public BeanResponse setSuccess(Boolean success) {
+			this.success = success;
+			return this;
+		}
+		public String getMsg() {
+			return msg;
+		}
+		public BeanResponse setMsg(String msg) {
+			this.msg = msg;
+			return this;
+		}
 	}
 
 }

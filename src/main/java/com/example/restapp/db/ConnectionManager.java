@@ -28,6 +28,14 @@ public abstract class ConnectionManager {
 	
 	public abstract Class<? extends BeanSession> getSessionClass();
 	
+	/**
+	 * Performs after App initialization, so you can run scripts or other database operations
+	 * @param session
+	 */
+	public void preRun(BeanSession session) {
+		
+	}
+	
 	public void shutdown() {
 		pool.close();
 		deregisterDrivers();

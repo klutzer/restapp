@@ -16,12 +16,6 @@ import com.example.restapp.business.DummyBean;
 
 public class DummyBeanTest extends AbstractTest {
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
-		session().createTable(DummyBean.class);
-	}
-	
 	@Test
 	public void testPostAsBean() throws Exception {
 		DummyBean dummy = new DummyBean();

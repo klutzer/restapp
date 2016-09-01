@@ -8,6 +8,12 @@ public class DummyBean {
 	private String name;
 	private DateTime date;
 	
+	public DummyBean() {}
+	
+	public DummyBean(Long id) {
+		this.id = id;
+	}
+	
 	public Long getId() {
 		return id;
 	}

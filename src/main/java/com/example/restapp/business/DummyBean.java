@@ -4,20 +4,20 @@ import org.joda.time.DateTime;
 
 public class DummyBean {
 	
-	private Long id;
+	private long id;
 	private String name;
 	private DateTime date;
 	
 	public DummyBean() {}
 	
-	public DummyBean(Long id) {
+	public DummyBean(long id) {
 		this.id = id;
 	}
 	
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getName() {

@@ -13,29 +13,30 @@ import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
 import com.example.restapp.business.DummyBean;
+import com.example.restapp.resources.DummyResource.BeanResponse;
 
 public class DummyBeanTest extends AbstractTest {
 
 	@Test
-	public void testPostAsBean() throws Exception {
+	public void testAddAsBean() throws Exception {
 		DummyBean dummy = new DummyBean();
 		dummy.setName("Test");
 		DummyBean response = target("dummy")
 				.request()
-				.post(Entity.json(dummy), DummyBean.class);
+				.put(Entity.json(dummy), DummyBean.class);
 		assertNotNull(response);
-		assertEquals(new Long(1), response.getId());
+		assertEquals(1, response.getId());
 	}
 	
 	@Test
-	public void testPostAsJSON() throws Exception {
+	public void testAddAsJSON() throws Exception {
 		String json = "{\"name\": \"Érico KL\","
 				+ "\"date\": \"1\"}";
 		DummyBean response = target("dummy")
 				.request()
-				.post(Entity.entity(json, MediaType.APPLICATION_JSON), DummyBean.class);
+				.put(Entity.entity(json, MediaType.APPLICATION_JSON), DummyBean.class);
 		assertNotNull(response);
-		assertEquals(new Long(1), response.getId());
+		assertEquals(1, response.getId());
 	}
 	
 	@Test
@@ -61,9 +62,9 @@ public class DummyBeanTest extends AbstractTest {
 				.get(new GenericType<List<DummyBean>>(){});
 		assertNotNull(response);
 		assertEquals(2, response.size());
-		assertEquals(new Long(1), response.get(0).getId());		
+		assertEquals(1, response.get(0).getId());		
 		assertEquals("John", response.get(0).getName());		
-		assertEquals(new Long(2), response.get(1).getId());		
+		assertEquals(2, response.get(1).getId());		
 		assertEquals("Kate", response.get(1).getName());
 	}
 	
@@ -76,9 +77,51 @@ public class DummyBeanTest extends AbstractTest {
 		
 		d = target("dummy")
 				.request()
-				.post(Entity.json(d), DummyBean.class);
-		assertEquals(new Long(1), d.getId());
+				.put(Entity.json(d), DummyBean.class);
+		assertEquals(1, d.getId());
 		assertEquals(time.withZone(DateTimeZone.UTC), d.getDate().withZone(DateTimeZone.UTC));
+	}
+	
+	@Test
+	public void testDelete() throws Exception {
+		
+		DummyBean d1 = new DummyBean();
+		d1.setName("John");
+		session().insert(d1);
+		
+		BeanResponse response = target("dummy")
+				.path("1")
+				.request()
+				.delete(BeanResponse.class);
+		assertEquals("Bean deleted", response.getMsg());
+		
+		response = target("dummy")
+				.path("1")
+				.request()
+				.delete(BeanResponse.class);
+		assertEquals("Nothing was deleted", response.getMsg());
+	}
+	
+	@Test
+	public void testUpdate() throws Exception {
+		
+		DummyBean d1 = new DummyBean();
+		d1.setName("John");
+		session().insert(d1);
+		
+		DummyBean d2 = new DummyBean();
+		d2.setName("Kate");
+		session().insert(d2);
+		
+		DummyBean data = new DummyBean(2);
+		data.setDate(new DateTime().withDate(1991, 01, 31));
+		
+		DummyBean response = target("dummy")
+				.request()
+				.put(Entity.json(data), DummyBean.class);
+		assertNotNull(response);
+		assertEquals(2, response.getId());
+		assertEquals(data.getDate().withZone(DateTimeZone.UTC), response.getDate().withZone(DateTimeZone.UTC));
 	}
 	
 }

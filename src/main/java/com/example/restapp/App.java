@@ -1,5 +1,8 @@
 package com.example.restapp;
 
+import io.swagger.jaxrs.listing.ApiListingResource;
+import io.swagger.jaxrs.listing.SwaggerSerializers;
+
 import java.sql.Connection;
 import java.util.logging.Logger;
 
@@ -10,6 +13,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.mentabean.BeanConfig;
 import org.mentabean.BeanManager;
 import org.mentabean.BeanSession;
+import org.mentabean.DBTypes;
 import org.mentabean.util.PropertiesProxy;
 import org.mentacontainer.Container;
 import org.mentacontainer.Scope;
@@ -21,10 +25,6 @@ import com.example.restapp.dao.DummyBeanDAO;
 import com.example.restapp.db.ConnectionFactory;
 import com.example.restapp.db.ConnectionManager;
 import com.example.restapp.db.H2ConnectionManager;
-import com.example.restapp.db.types.DBTypes;
-
-import io.swagger.jaxrs.listing.ApiListingResource;
-import io.swagger.jaxrs.listing.SwaggerSerializers;
 
 @SuppressWarnings("deprecation")
 @ApplicationPath("/api/*")
@@ -72,7 +72,7 @@ public class App extends ResourceConfig {
 			.addConstructorDependency(Connection.class);
 		container.autowire(BeanSession.class);
 
-		//Here add your own IoC settings...
+		// here add your own IoC settings...
 		container.ioc(DummyBeanDAO.class, DummyBeanDAO.class);
 		//...
 	}
@@ -85,7 +85,7 @@ public class App extends ResourceConfig {
 	
 	private void beans() {
 		
-		//Here add the mapping for your beans
+		// here add the mappings for your beans
 		
 		DummyBean bean = PropertiesProxy.create(DummyBean.class);
 		BeanConfig config = new BeanConfig(DummyBean.class, "dummies")

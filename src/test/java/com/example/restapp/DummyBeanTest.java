@@ -23,7 +23,7 @@ public class DummyBeanTest extends AbstractTest {
 		dummy.setName("Test");
 		DummyBean response = target("dummy")
 				.request()
-				.put(Entity.json(dummy), DummyBean.class);
+				.post(Entity.json(dummy), DummyBean.class);
 		assertNotNull(response);
 		assertEquals(1, response.getId());
 	}
@@ -113,15 +113,37 @@ public class DummyBeanTest extends AbstractTest {
 		d2.setName("Kate");
 		session().insert(d2);
 		
-		DummyBean data = new DummyBean(2);
+		DummyBean data = new DummyBean();
 		data.setDate(new DateTime().withDate(1991, 01, 31));
 		
 		DummyBean response = target("dummy")
+				.path("2")
 				.request()
 				.put(Entity.json(data), DummyBean.class);
 		assertNotNull(response);
 		assertEquals(2, response.getId());
 		assertEquals(data.getDate().withZone(DateTimeZone.UTC), response.getDate().withZone(DateTimeZone.UTC));
+	}
+	
+	@Test
+	public void testUpsert() throws Exception {
+		DummyBean dummy = new DummyBean();
+		dummy.setName("Test");
+		DummyBean response = target("dummy")
+				.request()
+				.put(Entity.json(dummy), DummyBean.class);
+		assertNotNull(response);
+		assertEquals(1, response.getId());
+		
+		dummy = new DummyBean(1);
+		dummy.setName("Another test");
+		
+		response = target("dummy")
+				.request()
+				.put(Entity.json(dummy), DummyBean.class);
+		assertNotNull(response);
+		assertEquals(1, response.getId());
+		assertEquals("Another test", response.getName());
 	}
 	
 }

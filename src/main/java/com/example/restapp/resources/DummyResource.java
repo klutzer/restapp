@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -26,12 +27,30 @@ public class DummyResource {
 	//Getting a DAO instance from container
 	private DummyBeanDAO dummyDAO = App.container().get(DummyBeanDAO.class);
 	
+	@ApiOperation("Insert a new dummy")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public DummyBean add(@ApiParam("The new dummy to add") DummyBean bean) {
+		return dummyDAO.add(bean);
+	}
+	
 	@ApiOperation("Add or update a dummy")
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public DummyBean save(@ApiParam("The new dummy to save") DummyBean bean) {
+	public DummyBean save(@ApiParam("A dummy to save (upsert)") DummyBean bean) {
 		return dummyDAO.save(bean);
+	}
+	
+	@ApiOperation("Update a dummy")
+	@PUT
+	@Path("{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public DummyBean update(@PathParam("id") long id, @ApiParam("A dummy to update") DummyBean bean) {
+		bean.setId(id);
+		return dummyDAO.update(bean);
 	}
 	
 	@ApiOperation("List all dummy beans")

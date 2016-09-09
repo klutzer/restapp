@@ -1,5 +1,9 @@
 package com.example.restapp.resources;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -15,10 +19,6 @@ import javax.ws.rs.core.MediaType;
 import com.example.restapp.App;
 import com.example.restapp.business.DummyBean;
 import com.example.restapp.dao.DummyBeanDAO;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @Api("Dummies")
 @Path("/dummy")
@@ -65,7 +65,7 @@ public class DummyResource {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public DummyBean getById(@PathParam("id") long id) {
-		return dummyDAO.get(new DummyBean(id));
+		return dummyDAO.getById(new DummyBean(id));
 	}
 	
 	@ApiOperation("Delete dummy bean by id")

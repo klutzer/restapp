@@ -8,10 +8,12 @@ import java.util.Enumeration;
 import org.mentabean.BeanException;
 import org.mentabean.BeanSession;
 import org.mentabean.util.SQLUtils;
+import org.mentacontainer.Factory;
+import org.mentacontainer.Interceptor;
 
 import com.zaxxer.hikari.HikariDataSource;
 
-public abstract class ConnectionManager {
+public abstract class ConnectionManager implements Factory<Connection>, Interceptor<Connection> {
 
 	private final HikariDataSource pool;
 	
@@ -33,7 +35,7 @@ public abstract class ConnectionManager {
 	 * @param session
 	 */
 	public void preRun(BeanSession session) {
-		
+		// does nothing by default
 	}
 	
 	public void shutdown() {
@@ -57,11 +59,11 @@ public abstract class ConnectionManager {
 		try {
 			return pool.getConnection();
 		} catch (Exception e) {
-			throw new BeanException("Erro ao retornar conexão do pool", e);
+			throw new BeanException("Error getting database connection from the pool!", e);
 		}
 	}
 	
-	public void commit(Connection conn) {
+	public void commitAndClose(Connection conn) {
 		try {
 			if (!conn.getAutoCommit() && !conn.isClosed()) {
 				SQLUtils.commitTransaction(conn);
@@ -83,5 +85,25 @@ public abstract class ConnectionManager {
 			throw new BeanException(e);
 		}
 	}
+
+	@Override
+    public void onCreated(Connection conn) {
+		// nothing to do here
+    }
+
+	@Override
+    public void onCleared(Connection conn) {
+		commitAndClose(conn);
+    }
+
+    @Override
+    public Connection getInstance() {
+	    return getConnection();
+    }
+
+	@Override
+    public Class<? extends Connection> getType() {
+	    return Connection.class;
+    }
 	
 }

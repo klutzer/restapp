@@ -1,5 +1,6 @@
 package com.example.restapp;
 
+import static org.mentacontainer.impl.SingletonFactory.*;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 
@@ -18,11 +19,8 @@ import org.mentabean.util.PropertiesProxy;
 import org.mentacontainer.Container;
 import org.mentacontainer.Scope;
 import org.mentacontainer.impl.MentaContainer;
-import org.mentacontainer.impl.SingletonFactory;
 
 import com.example.restapp.business.DummyBean;
-import com.example.restapp.dao.DummyBeanDAO;
-import com.example.restapp.db.ConnectionFactory;
 import com.example.restapp.db.ConnectionManager;
 import com.example.restapp.db.H2ConnectionManager;
 
@@ -32,19 +30,21 @@ public class App extends ResourceConfig {
 
 	private static Container container;
 	private final BeanManager beanManager;
+	private final ConnectionManager connectionManager;
 	
-	public App(ConnectionManager cm) {
+	public App(ConnectionManager connectionManager) {
 		
+		this.connectionManager = connectionManager;
+		this.beanManager = new BeanManager();
 		container = new MentaContainer();
-		beanManager = new BeanManager();
 		
 		//Mapping recursively by package name
 		packages(getClass().getPackage().getName());
 		
 		setUpSwagger();
 		beans();
-		ioc(cm);
-		executePreRun(cm);
+		ioc();
+		executePreRun();
 	}
 	
 	public App() {
@@ -57,29 +57,27 @@ public class App extends ResourceConfig {
 	}
 	
 	public static void releaseAndShutdown() {
-		ConnectionManager cm = container.get(ConnectionManager.class);
+		ConnectionManager connectionManager = container.get(ConnectionManager.class);
 		container.clear(Scope.THREAD);
 		container.clear(Scope.SINGLETON);
-		cm.shutdown();
+		connectionManager.shutdown();
 	}
 	
-	private void ioc(ConnectionManager cm) {
-		container.ioc(ConnectionManager.class, new SingletonFactory(cm));
-		container.ioc(BeanManager.class, new SingletonFactory(beanManager));
-		container.ioc(Connection.class, new ConnectionFactory(), Scope.THREAD);
-		container.ioc(BeanSession.class, cm.getSessionClass(), Scope.THREAD)
+	private void ioc() {
+		container.ioc(ConnectionManager.class, singleton(connectionManager));
+		container.ioc(BeanManager.class, singleton(beanManager));
+		container.ioc(Connection.class, connectionManager, Scope.THREAD);
+		container.ioc(BeanSession.class, connectionManager.getSessionClass(), Scope.THREAD)
 			.addConstructorDependency(BeanManager.class)
 			.addConstructorDependency(Connection.class);
 		container.autowire(BeanSession.class);
 
-		// here add your own IoC settings...
-		container.ioc(DummyBeanDAO.class, DummyBeanDAO.class);
-		//...
+		// more IoC configs go here...
 	}
 	
-	private void executePreRun(ConnectionManager cm) {
+	private void executePreRun() {
 		BeanSession session = container.get(BeanSession.class);
-		cm.preRun(session);
+		connectionManager.preRun(session);
 		container.clear(Scope.THREAD);
 	}
 	
@@ -104,7 +102,7 @@ public class App extends ResourceConfig {
 		conf.setTitle("RestApp API");
 		conf.setDescription("Live docs for RestApp API");
         conf.setVersion("v1");
-        conf.setResourcePackage("com.example.restapp.resources");
+        conf.setResourcePackage(getClass().getPackage().getName()+".resources");
         conf.setPrettyPrint(true);
         conf.setBasePath("/RestApp/api");
         conf.setScan(true);

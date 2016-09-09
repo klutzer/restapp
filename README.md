@@ -6,17 +6,18 @@ Enjoy it!
 
 ## Technology Stack
 - Jersey (JAX-RS)
-- Mentabean (ORM)
+- MentaBean (ORM)
 - MentaContainer (IoC)
 - HikariCP (Connection Pool)
 - Jackson (JSON provider)
 - JodaTime (Date/Time)
 - Jetty/Grizzly (Web Servers)
-- H2 (JUnit tests)
+- H2 Embedded Database (JUnit tests)
+- Swagger (Interactive API documentation)
 
-##Getting Started
+## Getting Started
 To run this RESTful web service you can just clone this repository and run
 ```
 mvn jetty:run
 ```
-Then, access your API docs in http://localhost:8080/RestApp/docs
+Then, access your API docs in `http://localhost:8080/RestApp/docs`

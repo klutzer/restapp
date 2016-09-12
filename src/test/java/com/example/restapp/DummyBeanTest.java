@@ -13,7 +13,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
 import com.example.restapp.business.DummyBean;
-import com.example.restapp.resources.DummyResource.BeanResponse;
+import com.example.restapp.resources.BeanResponse;
 
 public class DummyBeanTest extends AbstractTest {
 

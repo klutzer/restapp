@@ -1,4 +1,4 @@
-package com.example.restapp;
+package com.restapp;
 
 import static org.junit.Assert.*;
 
@@ -12,8 +12,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
-import com.example.restapp.business.DummyBean;
-import com.example.restapp.resources.BeanResponse;
+import com.restapp.entity.DummyBean;
+import com.restapp.resources.BeanResponse;
 
 public class DummyBeanTest extends AbstractTest {
 

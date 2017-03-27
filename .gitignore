@@ -1,3 +1,6 @@
+# General
+logs/
+
 # Eclipse
 .classpath
 .project

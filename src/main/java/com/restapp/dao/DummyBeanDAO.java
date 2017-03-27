@@ -1,8 +1,8 @@
-package com.example.restapp.dao;
+package com.restapp.dao;
 
 import org.mentabean.BeanSession;
 
-import com.example.restapp.business.DummyBean;
+import com.restapp.entity.DummyBean;
 
 public class DummyBeanDAO extends GenericDAO<DummyBean> {
 

@@ -1,11 +1,10 @@
-package com.example.restapp;
+package com.restapp;
 
 import static org.mentacontainer.impl.SingletonFactory.*;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 
 import java.sql.Connection;
-import java.util.logging.Logger;
 
 import javax.ws.rs.ApplicationPath;
 
@@ -19,37 +18,50 @@ import org.mentabean.util.PropertiesProxy;
 import org.mentacontainer.Container;
 import org.mentacontainer.Scope;
 import org.mentacontainer.impl.MentaContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.example.restapp.business.DummyBean;
-import com.example.restapp.db.ConnectionManager;
-import com.example.restapp.db.H2ConnectionManager;
+import com.restapp.config.SwaggerConfigurator;
+import com.restapp.db.ConnectionManager;
+import com.restapp.db.H2ConnectionManager;
+import com.restapp.entity.DummyBean;
 
 @SuppressWarnings("deprecation")
 @ApplicationPath("/api/*")
-public class App extends ResourceConfig {
+public class RestApp extends ResourceConfig {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RestApp.class);
 
-	private static Container container;
+	private static final Container container = new MentaContainer();
 	private final BeanManager beanManager;
 	private final ConnectionManager connectionManager;
 	
-	public App(ConnectionManager connectionManager) {
+	public RestApp(ConnectionManager connectionManager) {
 		
+		SLF4JBridgeHandler.removeHandlersForRootLogger();
+		SLF4JBridgeHandler.install();
+		
+		LOGGER.info("Starting server...");
 		this.connectionManager = connectionManager;
 		this.beanManager = new BeanManager();
-		container = new MentaContainer();
 		
 		//Mapping recursively by package name
 		packages(getClass().getPackage().getName());
 		
-		setUpSwagger();
+		SwaggerConfigurator.setUpSwagger(this);
+		LOGGER.info("Setup beans...");
 		beans();
+		LOGGER.info("Setup IoC...");
 		ioc();
+		LOGGER.info("Executing pre-run...");
 		executePreRun();
+		LOGGER.info("OK");
 	}
 	
-	public App() {
+	public RestApp() {
 		this(new H2ConnectionManager());
-		register(new LoggingFilter(Logger.getLogger(getClass().getSimpleName()), true));
+		register(new LoggingFilter(java.util.logging.Logger.getLogger(getClass().getName()), true));
 	}
 	
 	public static Container container() {
@@ -92,20 +104,6 @@ public class App extends ResourceConfig {
 				.field(bean.getDate(), DBTypes.JODA_DATETIME);
 		
 		beanManager.addBeanConfig(config);
-	}
-	
-	private void setUpSwagger() {
-		
-		registerClasses(SwaggerSerializers.class, ApiListingResource.class);
-		
-		io.swagger.jaxrs.config.BeanConfig conf = new io.swagger.jaxrs.config.BeanConfig();
-		conf.setTitle("RestApp API");
-		conf.setDescription("Live docs for RestApp API");
-        conf.setVersion("v1");
-        conf.setResourcePackage(getClass().getPackage().getName()+".resources");
-        conf.setPrettyPrint(true);
-        conf.setBasePath("/RestApp/api");
-        conf.setScan(true);
 	}
 	
 }

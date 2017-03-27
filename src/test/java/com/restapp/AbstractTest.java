@@ -1,4 +1,4 @@
-package com.example.restapp;
+package com.restapp;
 
 import java.util.logging.Logger;
 
@@ -15,13 +15,16 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.mentabean.BeanSession;
 import org.mentabean.util.SQLUtils;
 
-import com.example.restapp.db.H2ConnectionManager;
+import com.restapp.RestApp;
+import com.restapp.config.ContextListener;
+import com.restapp.config.JsonProvider;
+import com.restapp.db.H2ConnectionManager;
 
 @SuppressWarnings("deprecation")
 public class AbstractTest extends JerseyTest {
 
 	protected final BeanSession session() {
-		return App.container().get(BeanSession.class);
+		return RestApp.container().get(BeanSession.class);
 	}
 	
 	@Override
@@ -36,7 +39,7 @@ public class AbstractTest extends JerseyTest {
 		forceSet(TestProperties.CONTAINER_PORT, "0");
 		
 		return ServletDeploymentContext
-				.forServlet(new ServletContainer(new App(new H2ConnectionManager())))
+				.forServlet(new ServletContainer(new RestApp(new H2ConnectionManager())))
 				.addListener(ContextListener.class)
 				.build();
 	}

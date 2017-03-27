@@ -1,4 +1,4 @@
-package com.example.restapp.resources;
+package com.restapp.resources;
 
 public class BeanResponse {
 	

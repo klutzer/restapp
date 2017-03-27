@@ -1,4 +1,4 @@
-package com.example.restapp.resources;
+package com.restapp.resources;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,16 +16,16 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.example.restapp.App;
-import com.example.restapp.business.DummyBean;
-import com.example.restapp.dao.DummyBeanDAO;
+import com.restapp.RestApp;
+import com.restapp.dao.DummyBeanDAO;
+import com.restapp.entity.DummyBean;
 
 @Api("Dummies")
 @Path("/dummy")
 public class DummyResource {
 	
 	//Getting a DAO instance from container
-	private DummyBeanDAO dummyDAO = App.container().get(DummyBeanDAO.class);
+	private DummyBeanDAO dummyDAO = RestApp.container().get(DummyBeanDAO.class);
 	
 	@ApiOperation("Insert a new dummy")
 	@POST

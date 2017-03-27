@@ -1,4 +1,4 @@
-package com.example.restapp.dao;
+package com.restapp.dao;
 
 import org.mentabean.BeanSession;
 

@@ -1,4 +1,4 @@
-package com.example.restapp.db;
+package com.restapp.db;
 
 import java.sql.Connection;
 import java.sql.Driver;

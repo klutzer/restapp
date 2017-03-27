@@ -1,4 +1,4 @@
-package com.example.restapp;
+package com.restapp.config;
 
 import java.io.IOException;
 
@@ -10,6 +10,8 @@ import javax.ws.rs.ext.Provider;
 
 import org.mentacontainer.Scope;
 
+import com.restapp.RestApp;
+
 @Priority(1)
 @Provider
 public class ResponseFilter implements ContainerResponseFilter {
@@ -19,7 +21,7 @@ public class ResponseFilter implements ContainerResponseFilter {
 			ContainerResponseContext responseContext) throws IOException {
 		
 		//Cleaning all threads from container
-		App.container().clear(Scope.THREAD);
+		RestApp.container().clear(Scope.THREAD);
 		
 		//Enabling CORS support...
 		responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");

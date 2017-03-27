@@ -1,4 +1,4 @@
-package com.example.restapp.business;
+package com.restapp.entity;
 
 import org.joda.time.DateTime;
 

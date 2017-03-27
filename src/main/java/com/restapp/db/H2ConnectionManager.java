@@ -1,4 +1,4 @@
-package com.example.restapp.db;
+package com.restapp.db;
 
 import org.mentabean.BeanSession;
 import org.mentabean.jdbc.H2BeanSession;

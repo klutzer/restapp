@@ -30,7 +30,7 @@ public abstract class RestApp extends ResourceConfig {
 		instance = this;
 		container = new MentaContainer();
 		beanManager = new BeanManager();
-		connectionManager = getConnectionManager();
+		connectionManager = createConnectionManager();
 		initialize();
 	}
 
@@ -38,7 +38,7 @@ public abstract class RestApp extends ResourceConfig {
 	public abstract void onFinish();
 	public abstract void configureBeans(BeanManager manager);
 	public abstract void configureIoC(Container container);
-	public abstract ConnectionManager getConnectionManager();
+	public abstract ConnectionManager createConnectionManager();
 
 	public static Container container() {
 		return container;
@@ -48,8 +48,11 @@ public abstract class RestApp extends ResourceConfig {
 		return instance;
 	}
 
-	public void releaseAndShutdown() {
+	public final ConnectionManager getConnectionManager() {
+		return connectionManager;
+	}
 
+	public void releaseAndShutdown() {
 		container.clear(Scope.THREAD);
 		container.clear(Scope.SINGLETON);
 		connectionManager.shutdown();
@@ -78,7 +81,6 @@ public abstract class RestApp extends ResourceConfig {
 	}
 
 	private void executePreRun() {
-
 		BeanSession session = container.get(BeanSession.class);
 		connectionManager.preRun(session);
 		container.clear(Scope.THREAD);
@@ -86,7 +88,6 @@ public abstract class RestApp extends ResourceConfig {
 	}
 
 	private void startIoC() {
-
 		container.ioc(ConnectionManager.class, singleton(connectionManager));
 		container.ioc(BeanManager.class, singleton(beanManager));
 		container.ioc(Connection.class, connectionManager, Scope.THREAD);

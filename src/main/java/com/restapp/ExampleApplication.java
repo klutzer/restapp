@@ -46,7 +46,7 @@ public class ExampleApplication extends RestApp {
 	}
 
 	@Override
-	public ConnectionManager getConnectionManager() {
+	public ConnectionManager createConnectionManager() {
 		return new H2ConnectionManager();
 	}
 

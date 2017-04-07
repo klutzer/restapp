@@ -63,7 +63,7 @@ public abstract class ConnectionManager implements Factory<Connection>, Intercep
 		}
 	}
 	
-	public void commitAndClose(Connection conn) {
+	public final void commitAndClose(Connection conn) {
 		try {
 			if (!conn.getAutoCommit() && !conn.isClosed()) {
 				SQLUtils.commitTransaction(conn);
@@ -76,7 +76,7 @@ public abstract class ConnectionManager implements Factory<Connection>, Intercep
 		}
 	}
 
-	public void rollback(Connection conn) {
+	public final void rollback(Connection conn) {
 		try {
 			if (!conn.getAutoCommit() && !conn.isClosed()) {
 				SQLUtils.rollbackTransaction(conn);
@@ -97,12 +97,12 @@ public abstract class ConnectionManager implements Factory<Connection>, Intercep
     }
 
     @Override
-    public Connection getInstance() {
+    public final Connection getInstance() {
 	    return getConnection();
     }
 
 	@Override
-    public Class<? extends Connection> getType() {
+    public final Class<? extends Connection> getType() {
 	    return Connection.class;
     }
 	

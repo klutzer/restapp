@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restapp.config.DefaultObjectMapper;
 import com.restapp.config.SwaggerConfigurator;
 import com.restapp.db.ConnectionManager;
 
@@ -52,6 +54,10 @@ public abstract class RestApp extends ResourceConfig {
 		return connectionManager;
 	}
 
+	public ObjectMapper getObjectMapper() {
+		return new DefaultObjectMapper();
+	}
+
 	public void releaseAndShutdown() {
 		container.clear(Scope.THREAD);
 		container.clear(Scope.SINGLETON);
@@ -68,6 +74,7 @@ public abstract class RestApp extends ResourceConfig {
 		LOGGER.info("Starting server...");
 
 		//Mapping recursively by package name
+		packages(RestApp.class.getPackage().getName());
 		packages(getClass().getPackage().getName());
 
 		SwaggerConfigurator.setUpSwagger(this);

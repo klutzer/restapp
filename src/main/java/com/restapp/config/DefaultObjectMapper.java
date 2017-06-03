@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 @SuppressWarnings("serial")
-public class CustomObjectMapper extends ObjectMapper {
+public class DefaultObjectMapper extends ObjectMapper {
 
-	public CustomObjectMapper() {
+	public DefaultObjectMapper() {
 		configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true);
 		configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
 		configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

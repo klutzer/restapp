@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-import java.sql.Connection;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -58,16 +57,7 @@ public class DummyResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<DummyBean> listAll() {
-		System.out.println("CAIU NO GET: " + RestApp.get(Connection.class));
-		List<DummyBean> dummies = null;
-		try {
-		dummies = dummyDAO.listByExample(new DummyBean());
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println(dummies);
-		System.out.println("RETORNANDO " + dummies);
-		return dummies;
+		return dummyDAO.listByExample(new DummyBean());
 	}
 	
 	@ApiOperation("Get a specific dummy by id")
@@ -83,7 +73,6 @@ public class DummyResource {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public BeanResponse delete(@PathParam("id") long id) {
-		System.out.println("CAIU NO DELETE!!");
 		return new BeanResponse().setMsg(
 				dummyDAO.delete(new DummyBean(id)) ? "Bean deleted" : "Nothing was deleted");
 	}

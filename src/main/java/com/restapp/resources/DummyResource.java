@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+import java.sql.Connection;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -25,7 +26,7 @@ import com.restapp.entity.DummyBean;
 public class DummyResource {
 	
 	//Getting a DAO instance from container
-	private DummyBeanDAO dummyDAO = RestApp.container().get(DummyBeanDAO.class);
+	private DummyBeanDAO dummyDAO = RestApp.get(DummyBeanDAO.class);
 	
 	@ApiOperation("Insert a new dummy")
 	@POST
@@ -57,7 +58,16 @@ public class DummyResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<DummyBean> listAll() {
-		return dummyDAO.listByExample(new DummyBean());
+		System.out.println("CAIU NO GET: " + RestApp.get(Connection.class));
+		List<DummyBean> dummies = null;
+		try {
+		dummies = dummyDAO.listByExample(new DummyBean());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(dummies);
+		System.out.println("RETORNANDO " + dummies);
+		return dummies;
 	}
 	
 	@ApiOperation("Get a specific dummy by id")
@@ -73,6 +83,7 @@ public class DummyResource {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public BeanResponse delete(@PathParam("id") long id) {
+		System.out.println("CAIU NO DELETE!!");
 		return new BeanResponse().setMsg(
 				dummyDAO.delete(new DummyBean(id)) ? "Bean deleted" : "Nothing was deleted");
 	}

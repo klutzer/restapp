@@ -42,8 +42,8 @@ public abstract class RestApp extends ResourceConfig {
 	public abstract void configureIoC(Container container);
 	public abstract ConnectionManager createConnectionManager();
 
-	public static Container container() {
-		return container;
+	public static <E> E get(Object key) {
+		return container.get(key);
 	}
 
 	public static RestApp getInstance() {
@@ -58,8 +58,12 @@ public abstract class RestApp extends ResourceConfig {
 		return new DefaultObjectMapper();
 	}
 
-	public void releaseAndShutdown() {
-		container.clear(Scope.THREAD);
+	public final void clearContainerThreads() {
+		container.clear(Scope.THREAD);		
+	}
+
+	public final void releaseAndShutdown() {
+		clearContainerThreads();
 		container.clear(Scope.SINGLETON);
 		connectionManager.shutdown();
 		onFinish();

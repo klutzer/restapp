@@ -65,7 +65,7 @@ public abstract class ConnectionManager implements Factory<Connection>, Intercep
 	
 	public final void commitAndClose(Connection conn) {
 		try {
-			if (!conn.getAutoCommit() && !conn.isClosed()) {
+			if (!conn.isClosed() && !conn.getAutoCommit()) {
 				SQLUtils.commitTransaction(conn);
 			}
 		}catch (Exception e) {
@@ -78,7 +78,7 @@ public abstract class ConnectionManager implements Factory<Connection>, Intercep
 
 	public final void rollback(Connection conn) {
 		try {
-			if (!conn.getAutoCommit() && !conn.isClosed()) {
+			if (!conn.isClosed() && !conn.getAutoCommit()) {
 				SQLUtils.rollbackTransaction(conn);
 			}
 		}catch (Exception e) {

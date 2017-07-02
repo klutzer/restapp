@@ -22,7 +22,7 @@ import com.restapp.config.JsonProvider;
 public class AbstractTest extends JerseyTest {
 
 	protected final BeanSession session() {
-		return RestApp.container().get(BeanSession.class);
+		return RestApp.get(BeanSession.class);
 	}
 	
 	@Override
